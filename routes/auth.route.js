@@ -5,7 +5,7 @@ import { verifytoken } from "../middleware/verifytoken.js"
 const route =express.Router()
 
 
-route.post('/api/auth',verifytoken,(req,res)=>res.json({msg:"WELLCOME TO DASHBOARD"}))
+route.post('/auth',verifytoken,(req,res)=>res.json({msg:"WELLCOME TO DASHBOARD"}))
 route.post('/register',validate(registerscheema),register)
 route.post('/login',validate(loginscheema),login)
 

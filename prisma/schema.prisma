@@ -37,7 +37,8 @@ model threads {
   updated_at DateTime? @db.DateTime(0)
   replies    replies[]
   users      users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade, onUpdate: NoAction, map: "threads_ibfk_1")
-
+  report     report[]
+  
   @@index([user_id], map: "user_id")
 }
 
@@ -51,7 +52,30 @@ model users {
   last_login_at DateTime?  @db.DateTime(0)
   replies       replies[]
   threads       threads[]
+  profile       profile[]
+  report        report[]
+
 }
+model profile {
+  profile_id   Int     @id @default(autoincrement())
+  user_id      Int
+  firstname    String  @db.VarChar(100)
+  lastname     String  @db.VarChar(100)
+  sex          String  @db.VarChar(12)
+  picturename  String?  @db.Text 
+
+  users         users    @relation(fields: [user_id], references: [user_id])
+}
+model report {
+  report_id    Int     @id @default(autoincrement())
+  user_id      Int
+  thread_id    Int
+  report_title String  @db.VarChar(50)
+  users   users   @relation(fields: [user_id], references: [user_id])
+  threads threads @relation(fields: [thread_id], references: [thread_id])
+}
+
+
 
 enum users_role {
   user

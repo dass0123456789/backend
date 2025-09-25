@@ -54,7 +54,7 @@ try {
       username: user.username,
       role: user.role,
     };
-    const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "1d" });
+    const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "2h" });
     res.json({
       message: "Login Success!!!",
       payload: payload,
