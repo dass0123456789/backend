@@ -3,7 +3,7 @@ import createError from "../utils/createError.js"
 
 export const createThread=async(req,res,next)=>{
   try {
-    const {user_id,title,body}=req.body
+    const {user_id,title,body,cat_id}=req.body
     if(!user_id){
       return createError(400,"Please enter the userId")
     }
@@ -13,11 +13,15 @@ export const createThread=async(req,res,next)=>{
     if(!body){
       return createError(400,"Please enter the Thead")
     }
+    if(!cat_id){
+      return createError(400,"Please select the Category")
+    }
     await prisma.threads.create({
       data:{
         user_id,
         title,
-        body
+        body,
+        cat_id
       }
     })
     res.json({msg:"createthread success"})
@@ -121,4 +125,19 @@ export const unlockthread=async(req,res,next)=>{
     next(error)
   }
 }
-
+export const readthread=async(req,res,next)=>{
+  try {
+    const {thread_id}=req.params
+    if(!thread_id){
+      return createError(400,"Please enter the TheadId")
+    }
+    const thread=await prisma.threads.findFirst({
+      where:{
+        thread_id:parseInt(thread_id)
+      }
+    })
+    res.json(thread)
+  } catch (error) {
+    next(error)
+  }
+}

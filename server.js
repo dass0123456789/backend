@@ -6,6 +6,7 @@ import profileroute from "./routes/profile.rote.js"
 import threadroute from "./routes/threads.route.js"
 import replieroute from "./routes/replie.route.js"
 import reportroute from "./routes/report.route.js"
+import categoryroute from "./routes/category.route.js"
 const app =express()
 app.use(cors())
 app.use(morgan('dev'))
@@ -15,6 +16,7 @@ app.use('/api',profileroute)
 app.use('/api',threadroute)
 app.use('/api',replieroute)
 app.use('/api',reportroute)
+app.use('/api',categoryroute)
 app.use((err,req,res,next)=>{
   res.status(err.code||500).json({msg:err.message||"server error"})
 })
