@@ -8,6 +8,9 @@ export const loginscheema=object({
   email:string().email().required(),
   password:string().min(6)
 })
+export const updateemailcheema=object({
+  email:string().email().required()
+})
 export const validate=(schema)=>async(req,res,next)=>{
   try {
     await schema.validate(req.body,{abortEarly:false});
