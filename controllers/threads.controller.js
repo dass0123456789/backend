@@ -1,6 +1,5 @@
 import prisma from "../config/prisma.js"
 import createError from "../utils/createError.js"
-
 export const createThread=async(req,res,next)=>{
   try {
     const {user_id,title,body,cat_id}=req.body

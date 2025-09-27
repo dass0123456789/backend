@@ -67,3 +67,7 @@ export const removereplie=async(req,res,next)=>{
     next(error)
   }
 }
+export const listreplie=async(req,res,next)=>{
+  const replieall=await prisma.replies.findMany()
+  res.json(replieall)
+}

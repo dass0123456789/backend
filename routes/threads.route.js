@@ -4,8 +4,9 @@ createThread,removethread,updatethread
 ,listthread,lockthread,unlockthread,readthread
 } from "../controllers/threads.controller.js"
 import { verifytoken } from "../middleware/verifytoken.js"
+import {validate,contentschema} from "../utils/validate.js"
 const route = express.Router()
-route.post('/newthread',verifytoken,createThread)
+route.post('/newthread',validate(contentschema),verifytoken,createThread)
 route.delete('/removethread',verifytoken,removethread)
 route.patch('/updatethread',verifytoken,updatethread)
 route.get('/listthread',listthread)
