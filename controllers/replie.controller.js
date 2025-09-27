@@ -67,7 +67,12 @@ export const removereplie=async(req,res,next)=>{
     next(error)
   }
 }
-export const listreplie=async(req,res,next)=>{
-  const replieall=await prisma.replies.findMany()
+export const readreplie=async(req,res,next)=>{
+  const {id} =req.params
+  const replieall=await prisma.replies.findMany({
+    where:{
+      thread_id:parseInt(id)
+    }
+  })
   res.json(replieall)
 }

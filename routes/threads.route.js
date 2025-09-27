@@ -8,7 +8,7 @@ import {validate,contentschema} from "../utils/validate.js"
 const route = express.Router()
 route.post('/newthread',validate(contentschema),verifytoken,createThread)
 route.delete('/removethread',verifytoken,removethread)
-route.patch('/updatethread',verifytoken,updatethread)
+route.patch('/updatethread',validate(contentschema),verifytoken,updatethread)
 route.get('/listthread',listthread)
 route.post('/lockthread',lockthread)
 route.post('/unlockthread',unlockthread)

@@ -7,7 +7,16 @@ import threadroute from "./routes/threads.route.js"
 import replieroute from "./routes/replie.route.js"
 import reportroute from "./routes/report.route.js"
 import categoryroute from "./routes/category.route.js"
+import helmet from 'helmet'
 const app =express()
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'"]
+    }
+  }
+}));
 app.use(cors())
 app.use(morgan('dev'))
 app.use(express.json())

@@ -1,21 +1,68 @@
 import {object,string} from "yup"
-export const registerscheema=object({
-  email:string().email().required(),
-  username:string().min(1),
-  password:string().min(6)
+export const registerscheema=object().shape({
+  email:string().email().required('Must not be empty').test(
+      'no-script-tag',
+      'The text must not contain <script> tags or JavaScript code',
+      (value) => {
+        if (!value) return true; 
+        const forbiddenPattern = /<\s*script.*?>.*?<\s*\/\s*script\s*>|javascript:|on\w+=/gis;
+        return !forbiddenPattern.test(value);
+      }
+    ),
+  username:string().min(1).test(
+      'no-script-tag',
+      'The text must not contain <script> tags or JavaScript code',
+      (value) => {
+        if (!value) return true; 
+        const forbiddenPattern = /<\s*script.*?>.*?<\s*\/\s*script\s*>|javascript:|on\w+=/gis;
+        return !forbiddenPattern.test(value);
+      }
+    ),
+  password:string().min(6).test(
+      'no-script-tag',
+      'The text must not contain <script> tags or JavaScript code',
+      (value) => {
+        if (!value) return true; 
+        const forbiddenPattern = /<\s*script.*?>.*?<\s*\/\s*script\s*>|javascript:|on\w+=/gis;
+        return !forbiddenPattern.test(value);
+      }
+    )
 })
-export const loginscheema=object({
-  email:string().email().required(),
-  password:string().min(6)
+export const loginscheema=object().shape({
+  email:string().email().required('Must not be empty').test(
+      'no-script-tag',
+      'The text must not contain <script> tags or JavaScript code',
+      (value) => {
+        if (!value) return true; 
+        const forbiddenPattern = /<\s*script.*?>.*?<\s*\/\s*script\s*>|javascript:|on\w+=/gis;
+        return !forbiddenPattern.test(value);
+      }
+    ),
+  password:string().min(6).test(
+      'no-script-tag',
+      'The text must not contain <script> tags or JavaScript code',
+      (value) => {
+        if (!value) return true; 
+        const forbiddenPattern = /<\s*script.*?>.*?<\s*\/\s*script\s*>|javascript:|on\w+=/gis;
+        return !forbiddenPattern.test(value);
+      }
+    )
 })
-export const updateemailcheema=object({
-  email:string().email().required()
+export const updateemailcheema=object().shape({
+  email:string().email().required('Must not be empty').test(
+      'no-script-tag',
+      'The text must not contain <script> tags or JavaScript code',
+      (value) => {
+        if (!value) return true; 
+        const forbiddenPattern = /<\s*script.*?>.*?<\s*\/\s*script\s*>|javascript:|on\w+=/gis;
+        return !forbiddenPattern.test(value);
+      }
+    )
 })
 export const contentschema =object().shape({
-  body:string()
-    .required()
-    .test(
+  body:string().required().test(
       'no-script-tag',
+      'The text must not contain <script> tags or JavaScript code',
       (value) => {
         if (!value) return true; 
         const forbiddenPattern = /<\s*script.*?>.*?<\s*\/\s*script\s*>|javascript:|on\w+=/gis;
