@@ -226,3 +226,18 @@ export const amounuser=async(req,res,next)=>{
     next(error)
   }
 }
+export const listuser=async(req,res,next)=>{
+  try {
+    const user=await prisma.users.findMany({
+      select:{
+        user_id:true,
+        username:true,
+        email:true,
+        role:true
+      }
+    })
+    res.json(user)
+  } catch (error) {
+    next(error)
+  }
+}
