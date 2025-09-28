@@ -214,3 +214,15 @@ export const updatesex=async(req,res,next)=>{
     next(error)
   }
 }
+export const amounuser=async(req,res,next)=>{
+  try {
+    const user=await prisma.users.findMany()
+    let count=0
+    user.map((c)=>{
+      count++
+    })
+    res.json({amounuser:count})
+  } catch (error) {
+    next(error)
+  }
+}

@@ -144,3 +144,15 @@ export const readthread=async(req,res,next)=>{
     next(error)
   }
 }
+export const amounthreads=async(rea,res,next)=>{
+  try {
+    const thread=await prisma.threads.findMany()
+    let count=0
+    thread.map((c)=>{
+      count++
+    })
+    res.json({amounthread:count})
+  } catch (error) {
+    
+  }
+}

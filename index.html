@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HTML Image Gallery</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --accent: #22d3ee;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto;
+      background: linear-gradient(120deg, #0f172a, #111827 60%, #0b1020);
+      color: var(--text);
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    .header { text-align: center; margin-bottom: 16px; }
+    .header h1 { margin: 0 0 8px; font-weight: 700; letter-spacing: 0.3px; }
+    .header p { margin: 0; color: var(--muted); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .card {
+      position: relative;
+      background: #0b1220;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: #334155;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+    }
+    .card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      display: block;
+    }
+    .fallback {
+      height: 160px;
+      display: grid;
+      place-items: center;
+      background: #111827;
+      color: var(--muted);
+    }
+    figcaption {
+      padding: 10px 12px;
+      font-size: 14px;
+      color: var(--muted);
+      border-top: 1px solid #1f2937;
+    }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none; /* เริ่มต้นซ่อน */
+      place-items: center;
+      padding: 16px;
+      z-index: 50;
+    }
+    .modal.open { display: grid; }
+    .modal-content {
+      position: relative;
+      width: min(900px, 92vw);
+      background: var(--panel);
+      border: 1px solid #1f2937;
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+    }
+    .modal-content img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      display: block;
+      background: #0b1220;
+    }
+    .meta { margin-top: 10px; color: var(--muted); font-size: 14px; }
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #0b1220;
+      border: 1px solid #334155;
+      color: var(--text);
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 0;
+      display: grid;
+      place-items: center;
+      transition: background 160ms ease, border-color 160ms ease;
+    }
+    .close:hover { background: #0f172a; border-color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>HTML Image Gallery</h1>
+      <p>คลิกที่รูปเพื่อดูขนาดใหญ่ • กด ESC เพื่อปิด</p>
+    </header>
+
+    <section class="grid" id="grid" aria-label="Image gallery"></section>
+
+    <!-- Modal -->
+    <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Image viewer">
+      <div class="modal-content" id="modalContent">
+        <button class="close" id="closeBtn" aria-label="Close">✕</button>
+        <img id="modalImg" alt="" />
+        <div class="meta" id="modalMeta"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // แหล่งรูปตัวอย่าง (เปลี่ยนเป็น URL ของคุณได้)
+    const IMAGES = [
+      { id: 1, src: "./uploads/Screenshot 2025-09-28 181018.png", alt: "Mountain", type: "landscape" },
+      { id: 2, src: "https://images.unsplash.com/photo-1517817748498-7f1a4e6f9c68?q=80&w=1000", alt: "City", type: "urban" },
+      { id: 3, src: "https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=1000", alt: "Forest", type: "nature" },
+      { id: 4, src: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1000", alt: "Beach", type: "sea" },
+      { id: 5, src: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1000", alt: "Desert", type: "sand" },
+    ];
+
+    const grid = document.getElementById('grid');
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modalImg');
+    const modalMeta = document.getElementById('modalMeta');
+    const closeBtn = document.getElementById('closeBtn');
+
+    // สร้างการ์ดรูป
+    const errorIds = new Set();
+    IMAGES.forEach(img => {
+      const figure = document.createElement('figure');
+      figure.className = 'card';
+      figure.tabIndex = 0; // โฟกัสด้วยคีย์บอร์ดได้
+
+      const imageEl = document.createElement('img');
+      imageEl.src = img.src;
+      imageEl.alt = img.alt;
+      imageEl.loading = 'lazy';
+      imageEl.addEventListener('error', () => {
+        errorIds.add(img.id);
+        const fallback = document.createElement('div');
+        fallback.className = 'fallback';
+        fallback.textContent = 'รูปโหลดไม่สำเร็จ';
+        figure.replaceChild(fallback, imageEl);
+      });
+
+      const caption = document.createElement('figcaption');
+      caption.textContent = img.alt;
+
+      figure.appendChild(imageEl);
+      figure.appendChild(caption);
+
+      figure.addEventListener('click', () => openModal(img));
+      figure.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') openModal(img);
+      });
+
+      grid.appendChild(figure);
+    });
+
+    function openModal(img) {
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      modalImg.src = img.src;
+      modalImg.alt = img.alt;
+      modalMeta.innerHTML = `<strong>คำอธิบาย:</strong> ${img.alt} • <strong>ประเภท:</strong> ${img.type}`;
+    }
+
+    function closeModal() {
+      modal.classList.remove('open');
+      document.body.style.overflow = 'auto';
+      modalImg.src = '';
+      modalImg.alt = '';
+      modalMeta.textContent = '';
+    }
+
+    // ปิดด้วยปุ่มและการคลิกนอกคอนเทนต์
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal();
+    });
+
+    // ปิดด้วย ESC
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) {
+        closeModal();
+      }
+    });
+  </script>
+</body>
+</html>
