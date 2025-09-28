@@ -1,5 +1,7 @@
 import prisma from "../config/prisma.js"
 import createError from "../utils/createError.js"
+import redisClient from "../config/redis.js"
+import { json } from "express"
 export const createThread=async(req,res,next)=>{
   try {
     const {user_id,title,body,cat_id}=req.body
@@ -23,6 +25,7 @@ export const createThread=async(req,res,next)=>{
         cat_id
       }
     })
+    await redisClient.del('thread')
     res.json({msg:"createthread success"})
   } catch (error) {
     next(error)
@@ -42,6 +45,7 @@ export const removethread=async(req,res,next)=>{
         is_deleted:true
       }
     })
+    await redisClient.del('thread')
     res.json({msg:"deletethread success"})
   } catch (error) {
     next(error)
@@ -65,6 +69,7 @@ export const updatethread=async(req,res,next)=>{
         updated_at:new Date()
       }
     })
+    await redisClient.del('thread')
     res.json({msg:"updatethread success"})
   } catch (error) {
     next(error)
@@ -72,16 +77,13 @@ export const updatethread=async(req,res,next)=>{
 }
 export const listthread=async(req,res,next)=>{
   try {
+    const threadCache=await redisClient.get('thread')
+    if(threadCache){
+      return res.json(JSON.parse(threadCache))
+    }
     const threads=await prisma.threads.findMany()
-    let count=0
-    threads.map((c)=>{
-      if(c.is_deleted!==true){
-        count++
-      }
-    })
-    res.json({threads,
-      threadamounall:count
-    })
+    await redisClient.setEx('thread',3600,JSON.stringify(threads, null, 4))
+    res.json(threads)
   } catch (error) {
     next(error)
   }
@@ -100,6 +102,7 @@ export const lockthread=async(req,res,next)=>{
         is_locked:true
       }
     })
+    await redisClient.del('thread')
     res.json({msg:"lockthread success"})
   } catch (error) {
     next(error)
@@ -119,6 +122,7 @@ export const unlockthread=async(req,res,next)=>{
         is_locked:false
       }
     })
+    await redisClient.del('thread')
     res.json({msg:"unlockthread success"})
   } catch (error) {
     next(error)
