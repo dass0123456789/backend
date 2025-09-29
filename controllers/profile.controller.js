@@ -1,5 +1,6 @@
 import prisma from "../config/prisma.js"
 import createError from "../utils/createError.js"
+import bcrypt from "bcrypt"
 export const createprofile = async (req, res, next) => {
   try {
     const { user_id, firstname, lastname, sex,link} = req.body
@@ -207,7 +208,7 @@ export const updatesex = async (req, res, next) => {
     }
     await prisma.profile.update({
       where: {
-        user_id:user.profile_id
+        profile_id:user.profile_id
       },
       data: {
         sex
@@ -356,6 +357,34 @@ export const readuserbyemail=async(req,res,next)=>{
       return createError(400, "This user does not exist")
     }
     res.json(user)
+  } catch (error) {
+    next(error)
+  }
+}
+export const updatepassword=async(req,res,next)=>{
+  try {
+    const {user_id,password}=req.body
+    if (!user_id) {
+      return createError(400, "Please enter the userId")
+    }
+    const user=await prisma.users.findFirst({
+      where:{
+        user_id
+      }
+    })
+    if (!user) {
+      return createError(400, "user not exists")
+    }
+    const hashpass=bcrypt.hashSync(password,10)
+    await prisma.users.update({
+      where:{
+        user_id
+      },
+      data:{
+        pass_hash:hashpass
+      }
+    })
+    res.json({msg:"updatepassword success"})
   } catch (error) {
     next(error)
   }
