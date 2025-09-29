@@ -8,7 +8,7 @@ export const listcategory = async (req, res, next) => {
     next(error)
   }
 }
-export const readcategory = async (req, res, next) => {
+export const readthreadbycategory = async (req, res, next) => {
   try {
     const { cat_id } = req.params
     if (!cat_id) {
@@ -96,6 +96,25 @@ export const removecategory = async (req, res, next) => {
       }
     })
     res.json({ msg: "deletecategory success" })
+  } catch (error) {
+    next(error)
+  }
+}
+export const readcategory=async(req,res,next)=>{
+  try {
+    const {cat_id}=req.params
+    if (!cat_id) {
+      return createError(400, "Please enter the CategoryID")
+    }
+    const cat=await prisma.category.findFirst({
+      where:{
+        cat_id:parseInt(cat_id)
+      }
+    })
+    if(!cat){
+      return createError(400, "This category does not exist")
+    }
+    res.json(cat)
   } catch (error) {
     next(error)
   }
