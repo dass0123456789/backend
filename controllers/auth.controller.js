@@ -47,14 +47,20 @@ try {
     if (!checkPassword) {
       createError(400, "Email or Password is Invalid!!");
     }
-    console.log("pass")
-    //  4. Generate Token
     const payload = {
       id: user.user_id,
       username: user.username,
       role: user.role,
     };
-    const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "2h" });
+    const token = jwt.sign(payload, process.env.SECRET, { expiresIn: "5h" });
+    await prisma.users.update({
+      where:{
+        user_id:user.user_id
+      },
+      data:{
+        last_login_at:new Date()
+      }
+    })
     res.json({
       message: "Login Success!!!",
       payload: payload,

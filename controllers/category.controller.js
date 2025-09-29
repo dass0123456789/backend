@@ -14,7 +14,7 @@ export const readthreadbycategory = async (req, res, next) => {
     if (!cat_id) {
       return createError(400, "Please enter the CategoryId")
     }
-    const cat = await prisma.category.findMany({
+    const cat = await prisma.threads.findMany({
       where: {
         cat_id: parseInt(cat_id)
       }
