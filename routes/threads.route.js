@@ -1,6 +1,6 @@
 import express from "express"
 import {
-createThread,removethread,updatethread
+createThread,removethread,updatethread,searchthread
 ,listthread,lockthread,unlockthread,readthread,amounthreads
 } from "../controllers/threads.controller.js"
 import { verifytoken } from "../middleware/verifytoken.js"
@@ -14,4 +14,5 @@ route.post('/lockthread',lockthread)
 route.post('/unlockthread',unlockthread)
 route.get('/readthread/:thread_id',readthread)
 route.get('/amounthreads',amounthreads)
+route.get('/searchthread/:title',searchthread)
 export default route
