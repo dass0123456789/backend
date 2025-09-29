@@ -3,7 +3,7 @@ import multer from "../middleware/upload.js"
 import { verifytoken } from "../middleware/verifytoken.js"
 import {validate,updateemailcheema} from "../utils/validate.js"
 import {createprofile,upprofile,updateusername,updaterole,readuser,
-readprofile,updateemail,updatefirstname,listuser,updatelink
+readprofile,updateemail,updatefirstname,listuser,updatelink,readuserbyemail
 ,updatelastname,updatesex,amounuser} from "../controllers/profile.controller.js"
 const route=express.Router()
 route.post('/uploadprofile',verifytoken,multer,upprofile)
@@ -16,7 +16,8 @@ route.patch('/updatelastname',verifytoken,updatelastname)
 route.patch('/updatesex',verifytoken,updatesex)
 route.get('/amounuser',amounuser)
 route.get('/listuser',listuser)
-route.patch('/updaterole',updaterole)
+route.patch('/updaterole',verifytoken,updaterole)
 route.get('/readuser/:user_id',readuser)
-route.patch('/updatelink',updatelink)
+route.patch('/updatelink',verifytoken,updatelink)
+route.get('/readuserbyemail/:email',readuserbyemail)
 export default route

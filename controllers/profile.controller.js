@@ -335,3 +335,28 @@ export const updatelink=async(req,res,next)=>{
     next(error)
   }
 }
+export const readuserbyemail=async(req,res,next)=>{
+  try {
+    const {email}=req.params
+    if(!email){
+      return createError(400, "Please enter the Email")
+    }
+    const user=await prisma.users.findFirst({
+      where:{
+        email
+      },
+      select:{
+        user_id: true,
+        username: true,
+        email: true,
+        role: true
+      }
+    })
+    if(!user){
+      return createError(400, "This user does not exist")
+    }
+    res.json(user)
+  } catch (error) {
+    next(error)
+  }
+}
