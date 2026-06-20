@@ -26,7 +26,7 @@ docker run -d -p 6379:6379 Redis
 ```
 DATABASE_URL="mysql://root:<your_root_pass>@localhost:3306/<your_database_name>"
 
-SECRET="secureproject5433"
+SECRET="your_secret"
 ```
 # To start
 - backend: `npm install` then `npx prisma db push` then `npm start`
